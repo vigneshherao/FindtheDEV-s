@@ -1,0 +1,22 @@
+{
+  "name": "findthedevs",
+  "version": "1.0.0",
+  "description": "This is the first phase products dev and students can connect eachother",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vigneshherao/FindtheDEV-s.git"
+  },
+  "author": "Vignesh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vigneshherao/FindtheDEV-s/issues"
+  },
+  "homepage": "https://github.com/vigneshherao/FindtheDEV-s#readme",
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
