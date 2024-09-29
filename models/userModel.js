@@ -1,22 +1,41 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
+const userSchema = new mongoose.Schema(
+  {
+    firstName: {
+      type: String,
+      required: true,
+      minLength: 4,
+    },
+    lastName: {
+      type: String,
+    },
+    phone: {
+      type: Number,
+      required: true,
+      unique: true,
+      validate: {
+        validator: function (value) {
+          return value.toString().length === 10;
+        },
+        message: "Phone number should be of length 10",
+      },
+    },
+    age: {
+      type: Number,
+      min: 18,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
   },
-  lastName: {
-    type: String,
-  },
-  phone: {
-    type: Number,
-  },
-  age: {
-    type: Number,
-  },
-  email: {
-    type: String,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 const User = mongoose.model("User", userSchema);
 

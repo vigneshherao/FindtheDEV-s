@@ -19,10 +19,11 @@ app.post("/user", async (req, res) => {
   try {
     const user = new userModel(req.body);
     await user.save();
-
     res.send("user added sucessfully");
   } catch (error) {
-    console.log("something error on adding user", error);
+    res
+      .status(500)
+      .send({ message: "Error adding user", error: error.message });
   }
 });
 
@@ -47,6 +48,10 @@ app.patch("/user", async (req, res) => {
   } catch (error) {
     console.log(error);
   }
+});
+
+app.use("/", (err, req, res) => {
+  res.status(400).send("something went wrong " + err);
 });
 
 connectDb()
