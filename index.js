@@ -33,20 +33,33 @@ app.delete("/user", async (req, res) => {
     const data = await userModel.findByIdAndDelete(userId);
     res.send("user is deleted");
   } catch (error) {
-    console.log("err in getting data");
+    res
+      .status(500)
+      .send({ message: "Error deleting user", error: error.message });
   }
 });
 
-app.patch("/user", async (req, res) => {
+app.patch("/user/:userId", async (req, res) => {
   try {
-    const { userId, ...data } = req.body;
+    const userId = req.params?.userID;
+    const data = req.body;
+    const isAllowed = ["firstName", "lastName", "phone", "age"];
+    const isUpdated = Object.keys(data).every((k) => isAllowed.includes(k));
+    if (data.phone > 10) {
+      throw new Error("This is not add extra number exceeding 10");
+    }
+    if (!isUpdated) {
+      throw new Error("This is not allowed to updated (email)");
+    }
     const updated = await userModel.findOneAndUpdate(
       { _id: userId },
-      { $set: { ...data } }
+      { $set: { ...data }, runValidators: true }
     );
     res.send("updated");
   } catch (error) {
-    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error adding user", error: error.message });
   }
 });
 
