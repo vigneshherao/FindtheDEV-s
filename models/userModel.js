@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { type } = require("os");
 const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
@@ -39,6 +40,15 @@ const userSchema = new mongoose.Schema(
       validate(value) {
         if (!validator.isEmail(value)) {
           throw new Error("give the correct mail format");
+        }
+      },
+    },
+    password: {
+      type: String,
+      required: true,
+      validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error("Give the Strong password");
         }
       },
     },

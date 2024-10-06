@@ -3,6 +3,7 @@ const app = express();
 const port = 7999;
 const connectDb = require("./config/database");
 const userModel = require("./models/userModel");
+const bcrypt = require("bcrypt");
 
 app.use(express.json());
 
@@ -15,9 +16,36 @@ app.get("/user", async (req, res) => {
   }
 });
 
-app.post("/user", async (req, res) => {
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const user = new userModel(req.body);
+    const user = await userModel.findOne({ email: email });
+    if (!user) {
+      throw new Error("Please Check your mail!");
+    }
+
+    const isValid = bcrypt.compare(password, user?.password);
+    if (!isValid) {
+      throw new Error("Password is incorrect!");
+    }
+    res.send("user loggined sucessfully");
+  } catch (error) {
+    res.status(500).send({ message: "Login Issue", error: error.message });
+  }
+});
+
+app.post("/user", async (req, res) => {
+  const { firstName, lastName, email, phone, password, age } = req.body;
+  try {
+    const hasedPassword = await bcrypt.hash(password, 10);
+    const user = new userModel({
+      firstName,
+      lastName,
+      email,
+      phone,
+      password: hasedPassword,
+      age,
+    });
     await user.save();
     res.send("user added sucessfully");
   } catch (error) {
