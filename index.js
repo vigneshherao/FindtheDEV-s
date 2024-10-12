@@ -3,16 +3,23 @@ const app = express();
 const port = 7999;
 const connectDb = require("./config/database");
 const userModel = require("./models/userModel");
+const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/user", async (req, res) => {
   try {
     const data = await userModel.find({});
-    res.send(data);
+    const { token } = req.cookies;
+    const decoded = await jwt.verify(token, "vignesh@2019");
+    console.log(decoded);
+    const loginedUser = await userModel.findById({ _id: decoded._id });
+    res.send(loginedUser);
   } catch (error) {
-    console.log("err in getting data");
+    console.log("err in getting data" + error.message);
   }
 });
 
@@ -28,6 +35,8 @@ app.post("/login", async (req, res) => {
     if (!isValid) {
       throw new Error("Password is incorrect!");
     }
+    const token = await jwt.sign({ _id: user._id }, "vignesh@2019");
+    res.cookie("token", token);
     res.send("user loggined sucessfully");
   } catch (error) {
     res.status(500).send({ message: "Login Issue", error: error.message });
