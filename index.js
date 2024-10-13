@@ -6,21 +6,24 @@ const userModel = require("./models/userModel");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const userAuth = require("./middleware/userAuth");
 
 app.use(express.json());
 app.use(cookieParser());
 
-app.get("/user", async (req, res) => {
+app.get("/user", userAuth, (req, res) => {
   try {
-    const data = await userModel.find({});
-    const { token } = req.cookies;
-    const decoded = await jwt.verify(token, "vignesh@2019");
-    console.log(decoded);
-    const loginedUser = await userModel.findById({ _id: decoded._id });
-    res.send(loginedUser);
+    const user = req.user;
+    res.send(user);
   } catch (error) {
     console.log("err in getting data" + error.message);
   }
+});
+
+app.post("/addFriend", userAuth, (req, res) => {
+  try {
+    res.send(req.user.firstName + " Send you an requrest");
+  } catch (error) {}
 });
 
 app.post("/login", async (req, res) => {
@@ -35,8 +38,10 @@ app.post("/login", async (req, res) => {
     if (!isValid) {
       throw new Error("Password is incorrect!");
     }
-    const token = await jwt.sign({ _id: user._id }, "vignesh@2019");
-    res.cookie("token", token);
+    const token = await jwt.sign({ _id: user._id }, "vignesh@2019", {
+      expiresIn: "1h",
+    });
+    res.cookie("token", token, { expires: new Date(Date.now() + 8 + 900000) });
     res.send("user loggined sucessfully");
   } catch (error) {
     res.status(500).send({ message: "Login Issue", error: error.message });
