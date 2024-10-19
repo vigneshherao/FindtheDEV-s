@@ -5,7 +5,6 @@ const connectDb = require("./config/database");
 const userModel = require("./models/userModel");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const userAuth = require("./middleware/userAuth");
 
 app.use(express.json());
@@ -34,13 +33,13 @@ app.post("/login", async (req, res) => {
       throw new Error("Please Check your mail!");
     }
 
-    const isValid = bcrypt.compare(password, user?.password);
+    const isValid = user.comparePassword(password);
     if (!isValid) {
       throw new Error("Password is incorrect!");
     }
-    const token = await jwt.sign({ _id: user._id }, "vignesh@2019", {
-      expiresIn: "1h",
-    });
+
+    const token = await user.getJwt();
+    console.log(token);
     res.cookie("token", token, { expires: new Date(Date.now() + 8 + 900000) });
     res.send("user loggined sucessfully");
   } catch (error) {
