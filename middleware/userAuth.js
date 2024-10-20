@@ -6,6 +6,7 @@ const userAuth = async (req, res, next) => {
     const { token } = req.cookies;
     const decodedObj = await jwt.verify(token, "vignesh@2019");
     const user = await userModel.findById({ _id: decodedObj._id });
+    console.log("hai");
 
     if (!user) {
       throw new Error("User is not authenicated");
