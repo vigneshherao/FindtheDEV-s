@@ -47,4 +47,13 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+router.post("/logout", (req, res) => {
+  try {
+    res.cookie("token", null, { expiresIn: new Date(Date.now()) });
+    res.send("logout done");
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 module.exports = router;
