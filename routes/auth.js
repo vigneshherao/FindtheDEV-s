@@ -12,7 +12,7 @@ router.post("/login", async (req, res) => {
       throw new Error("Please Check your mail!");
     }
 
-    const isValid = user.comparePassword(password);
+    const isValid = await user.comparePassword(password);
     if (!isValid) {
       throw new Error("Password is incorrect!");
     }
