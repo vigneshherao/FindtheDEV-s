@@ -2,37 +2,39 @@ const express = require("express");
 const router = express.Router();
 const userAuth = require("../middleware/userAuth");
 const userModel = require("../models/userModel");
+const { validateData } = require("../utils/validate");
 
 router.get("/profile", userAuth, (req, res) => {
   try {
     const user = req.user;
-    res.send(user);
+    res.json({
+      message: `${user.firstName} retrived sucesffully`,
+      data: user,
+    });
   } catch (error) {
     console.log("err in getting data" + error.message);
   }
 });
 
-router.patch("/profile/:userId", async (req, res) => {
+router.patch("/profile/edit", userAuth, (req, res) => {
   try {
-    const userId = req.params?.userID;
-    const data = req.body;
-    const isAllowed = ["firstName", "lastName", "phone", "age"];
-    const isUpdated = Object.keys(data).every((k) => isAllowed.includes(k));
-    if (data.phone < 10) {
-      throw new Error("This is not allowed to add extra number exceeding 10");
+    if (!validateData(req)) {
+      throw new Error("Only Some data are allowed to edit");
     }
-    if (!isUpdated) {
-      throw new Error("This is not allowed to updated (email)");
-    }
-    const updated = await userModel.findOneAndUpdate(
-      { _id: userId },
-      { $set: { ...data }, runValidators: true }
+
+    const logginedInUser = req.user;
+    Object.keys(req.body).forEach(
+      (keys) => (logginedInUser[keys] = req.body[keys])
     );
-    res.send("updated");
+
+    logginedInUser.save();
+
+    res.json({
+      message: `${logginedInUser.firstName} updated sucessfully`,
+      data: logginedInUser,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .send({ message: "Error adding user", error: error.message });
+    res.send("Error " + error.message);
   }
 });
 

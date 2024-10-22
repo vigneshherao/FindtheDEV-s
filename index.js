@@ -16,8 +16,8 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 
 //Error Handling middleware
-app.use("/", (err, req, res) => {
-  res.status(400).send("something went wrong " + err);
+app.use((err, req, res, next) => {
+  res.status(400).send("Something went wrong: " + err.message);
 });
 
 //Connection string for the middle ware
