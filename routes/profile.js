@@ -12,18 +12,6 @@ router.get("/profile", userAuth, (req, res) => {
   }
 });
 
-router.delete("/profile/delete", async (req, res) => {
-  try {
-    const userId = req.body.userId;
-    const data = await userModel.findByIdAndDelete(userId);
-    res.send("user is deleted");
-  } catch (error) {
-    res
-      .status(500)
-      .send({ message: "Error deleting user", error: error.message });
-  }
-});
-
 router.patch("/profile/:userId", async (req, res) => {
   try {
     const userId = req.params?.userID;

@@ -2,10 +2,7 @@ const express = require("express");
 const app = express();
 const port = 7999;
 const connectDb = require("./config/database");
-const userModel = require("./models/userModel");
 const cookieParser = require("cookie-parser");
-
-const userAuth = require("./middleware/userAuth");
 
 //Routes
 const authRouter = require("./routes/auth");
@@ -18,15 +15,12 @@ app.use(cookieParser());
 app.use("/", authRouter);
 app.use("/", profileRouter);
 
-app.post("/addFriend", userAuth, (req, res) => {
-  try {
-    res.send(req.user.firstName + " Send you an requrest");
-  } catch (error) {}
-});
-
+//Error Handling middleware
 app.use("/", (err, req, res) => {
   res.status(400).send("something went wrong " + err);
 });
+
+//Connection string for the middle ware
 
 connectDb()
   .then(() => {
