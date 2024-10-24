@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 //Routes
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
+const requestRouter = require("./routes/request");
 
 //middleware
 app.use(express.json());
@@ -14,6 +15,7 @@ app.use(cookieParser());
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
+app.use("/", requestRouter);
 
 //Error Handling middleware
 app.use((err, req, res, next) => {
