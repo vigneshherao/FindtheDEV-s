@@ -2,12 +2,43 @@ const express = require("express");
 const userAuth = require("../middleware/userAuth");
 const router = express.Router();
 const ConnectionModel = require("../models/connectionModel");
+const User = require("../models/userModel");
 
 router.post("/request/user/:status/:toUserId", userAuth, async (req, res) => {
   try {
     const toUserId = req.params.toUserId;
+
     const status = req.params.status;
-    const fromUserId = req.user;
+    const fromUserId = req.user._id;
+
+    const allowed = ["add", "reject"];
+
+    const isallowed = allowed.includes(status);
+
+    if (!isallowed) {
+      throw new Error("Bad Request send to status");
+    }
+
+    if (fromUserId.toString() === toUserId.toString()) {
+      throw new Error("you cannot send yourself as a friend");
+    }
+
+    const isValidUser = await User.findById(toUserId);
+
+    const isExist = await ConnectionModel.findOne({
+      $or: [
+        { fromUserId, toUserId },
+        { fromUserId: toUserId, toUserId: fromUserId },
+      ],
+    });
+
+    if (isExist) {
+      throw new Error("Request already pending!!");
+    }
+
+    if (!isValidUser) {
+      throw new Error("Not a valid user to send request");
+    }
 
     const connectionReq = new ConnectionModel({
       fromUserId,
@@ -22,7 +53,7 @@ router.post("/request/user/:status/:toUserId", userAuth, async (req, res) => {
       data,
     });
   } catch (error) {
-    res.send("Error" + error.message);
+    res.send("Error " + error.message);
   }
 });
 
