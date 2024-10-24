@@ -19,10 +19,6 @@ router.post("/request/user/:status/:toUserId", userAuth, async (req, res) => {
       throw new Error("Bad Request send to status");
     }
 
-    if (fromUserId.toString() === toUserId.toString()) {
-      throw new Error("you cannot send yourself as a friend");
-    }
-
     const isValidUser = await User.findById(toUserId);
 
     const isExist = await ConnectionModel.findOne({
@@ -49,7 +45,7 @@ router.post("/request/user/:status/:toUserId", userAuth, async (req, res) => {
     const data = await connectionReq.save();
 
     res.json({
-      message: "Friend request done sucessfully",
+      message: `${req.user.firstName} ${status}'s ${isValidUser.firstName}`,
       data,
     });
   } catch (error) {
