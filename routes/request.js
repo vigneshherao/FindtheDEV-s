@@ -53,4 +53,38 @@ router.post("/request/user/:status/:toUserId", userAuth, async (req, res) => {
   }
 });
 
+router.post("/request/user/:status/:requestId", userAuth, async (req, res) => {
+  try {
+    const logginedUser = req.user;
+    const status = req.params.status;
+    const requestId = req.params.requestId;
+    const allowedStatus = ["accepted", "ignored"];
+
+    console.log(logginedUser);
+
+    const isStatus = allowedStatus.includes(status);
+
+    if (!isStatus) {
+      throw new Error("Status should be valid");
+    }
+    const isExist = await ConnectionModel.findOne({
+      _id: requestId,
+      toUserId: logginedUser._id,
+      status: "add",
+    });
+
+    if (!isExist) {
+      throw new Error("user should be valid");
+    }
+
+    isExist.status = status;
+
+    const data = await isExist.save();
+
+    res.json({ message: "Connect request accepted sucesfully!", data });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 module.exports = router;

@@ -18,7 +18,6 @@ router.post("/login", async (req, res) => {
     }
 
     const token = await user.getJwt();
-    console.log(token);
     res.cookie("token", token, { expires: new Date(Date.now() + 8 + 900000) });
     res.send("user loggined sucessfully");
   } catch (error) {
