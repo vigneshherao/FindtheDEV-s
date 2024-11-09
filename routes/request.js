@@ -60,8 +60,6 @@ router.post("/request/user/:status/:requestId", userAuth, async (req, res) => {
     const requestId = req.params.requestId;
     const allowedStatus = ["accepted", "ignored"];
 
-    console.log(logginedUser);
-
     const isStatus = allowedStatus.includes(status);
 
     if (!isStatus) {
