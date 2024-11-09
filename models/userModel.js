@@ -57,7 +57,6 @@ const userSchema = new mongoose.Schema(
     intrest: {
       type: [String],
       required: true,
-      unique: true,
     },
   },
   {

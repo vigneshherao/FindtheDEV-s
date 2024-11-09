@@ -27,6 +27,8 @@ router.post("/login", async (req, res) => {
 
 router.post("/signup", async (req, res) => {
   const { firstName, lastName, email, phone, password, age } = req.body;
+
+  const { intrest } = req.body;
   try {
     const hasedPassword = await bcrypt.hash(password, 10);
     const user = new userModel({
@@ -36,6 +38,7 @@ router.post("/signup", async (req, res) => {
       phone,
       password: hasedPassword,
       age,
+      intrest,
     });
     await user.save();
     res.send("user added sucessfully");
