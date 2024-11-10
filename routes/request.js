@@ -75,6 +75,8 @@ router.post("/request/user/:status/:requestId", userAuth, async (req, res) => {
       throw new Error("user should be valid");
     }
 
+    console.log(isExist);
+
     isExist.status = status;
 
     const data = await isExist.save();

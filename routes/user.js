@@ -30,4 +30,36 @@ router.get("/user/requests", userAuth, async (req, res) => {
   }
 });
 
+router.get("/user/connections", userAuth, async (req, res) => {
+  try {
+    const logginedUser = req.user;
+
+    const connections = await connectionModel
+      .find({
+        $or: [
+          {
+            toUserId: logginedUser._id,
+            status: "accepted",
+          },
+          {
+            fromUserId: logginedUser._id,
+            status: "accepted",
+          },
+        ],
+      })
+      .populate("fromUserId", ["firstName", "lastName"]);
+
+    const dataFromUser = connections.map((connection) => connection.fromUserId);
+
+    res.json({
+      message: `${
+        connections ? `${connections.length} connections` : "No Connections"
+      }  `,
+      data: dataFromUser,
+    });
+  } catch (error) {
+    res.status(404).send("Error " + error.message);
+  }
+});
+
 module.exports = router;
