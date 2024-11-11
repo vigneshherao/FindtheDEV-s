@@ -49,7 +49,12 @@ router.get("/user/connections", userAuth, async (req, res) => {
       })
       .populate("fromUserId", ["firstName", "lastName"]);
 
-    const dataFromUser = connections.map((connection) => connection.fromUserId);
+    const dataFromUser = connections.map((connection) => {
+      if (String(connection.fromUserId._id) === String(logginedUser._id)) {
+        return connection.toUserId;
+      }
+      return connection.fromUserId;
+    });
 
     res.json({
       message: `${
