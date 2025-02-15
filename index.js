@@ -3,6 +3,7 @@ const app = express();
 const port = 7999;
 const connectDb = require("./config/database");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 //Routes
 const authRouter = require("./routes/auth");
@@ -11,6 +12,12 @@ const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
 
 //middleware
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
