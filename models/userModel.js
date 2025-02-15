@@ -82,7 +82,7 @@ userSchema.methods.comparePassword = async function (password) {
     console.log(error);
   }
 };
-
+//fdsafsd
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
